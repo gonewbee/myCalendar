@@ -1,0 +1,10 @@
+.calendarDays li {
+  list-style: none;
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #999;
+  float: left;
+  text-align: center;
+  background-color: #E6D7BF; }
+
+/*# sourceMappingURL=style.css.map */
