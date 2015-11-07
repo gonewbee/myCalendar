@@ -1,4 +1,4 @@
-.calendarDays {
+.calendarHeader {
   li {
     list-style: none;
     width: 60px;
@@ -8,4 +8,7 @@
     text-align: center;
     background-color: #E6D7BF;
   }
+}
+.calendarDay {
+  clear: both;
 }

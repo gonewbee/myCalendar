@@ -9,7 +9,7 @@ var CalendarHeader = React.createClass({
     render: function() {
         return (
             <div className="calendarHeader">
-                <ol className="calendarDays">
+                <ol>
                     <li>一</li><li>二</li><li>三</li><li>四</li><li>五</li><li>六</li><li>日</li>
                 </ol>
             </div>
@@ -17,7 +17,30 @@ var CalendarHeader = React.createClass({
     }
 });
 
+var CalendarDay = React.createClass({
+    render: function() {
+        var day = this.props.date.getDay();
+        return(
+            <div className="calendarDay">
+                {day}
+            </div>
+        );
+    }
+});
+
+var Calendar = React.createClass({
+    render: function () {
+        var today = new Date();
+        return (
+            <div className="calendar">
+                <CalendarHeader />
+                <CalendarDay date={today}/>
+            </div>
+        );
+    }
+});
+
 ReactDOM.render(
-    <CalendarHeader />,
+    <Calendar />,
     document.getElementById('main')
 );

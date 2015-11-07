@@ -23,3 +23,18 @@
 SASS监听某个目录
 	
 	sass --watch scss:css
+
+## 使用babel
+也可以不使用webpack打包，安装babel
+
+	npm install --global babel-cli --registry https://registry.npm.taobao.org
+	npm install babel-preset-react --registry https://registry.npm.taobao.org
+转换jsx到js
+
+	babel --presets react jsx\index.jsx --out-file js\index.js
+	
+监听变化
+
+	babel --presets react jsx --watch --out-dir js
+
+	
