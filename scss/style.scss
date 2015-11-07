@@ -9,10 +9,13 @@ body,p {
   clear: both;
 }
 .calendarHeader {
+  ol {
+    margin: 0px;
+    padding: 0px;
+  }
   li {
     list-style: none;
     width: $calendarDayWidth;
-    padding: 5px;
     border: 1px solid #999;
     float: left;
     text-align: center;
@@ -25,6 +28,9 @@ body,p {
   width: $calendarDayWidth;
   height: $calendarDayHeight;
   line-height: $calendarDayHeight; // 可使文字垂直居中
+  border: 1px solid #999;
+  float: left;
+
   canvas {
     position: absolute;
     top: 0px;left: 0px;

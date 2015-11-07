@@ -4,10 +4,12 @@ body, p {
 .clear {
   clear: both; }
 
+.calendarHeader ol {
+  margin: 0px;
+  padding: 0px; }
 .calendarHeader li {
   list-style: none;
   width: 60px;
-  padding: 5px;
   border: 1px solid #999;
   float: left;
   text-align: center;
@@ -18,7 +20,9 @@ body, p {
   text-align: center;
   width: 60px;
   height: 60px;
-  line-height: 60px; }
+  line-height: 60px;
+  border: 1px solid #999;
+  float: left; }
   .calendarDay canvas {
     position: absolute;
     top: 0px;

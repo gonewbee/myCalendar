@@ -67,15 +67,26 @@ var CalendarDay = React.createClass({
     }
 });
 
-var Calendar = React.createClass({
+var CalendarDays = React.createClass({
     render: function () {
         var today = new Date();
+        return React.createElement(
+            'div',
+            { className: 'calendarDays' },
+            React.createElement(CalendarDay, { date: today }),
+            React.createElement(CalendarDay, { date: today })
+        );
+    }
+});
+
+var Calendar = React.createClass({
+    render: function () {
         return React.createElement(
             'div',
             { className: 'calendar' },
             React.createElement(CalendarHeader, null),
             React.createElement('div', { className: 'clear' }),
-            React.createElement(CalendarDay, { date: today })
+            React.createElement(CalendarDays, null)
         );
     }
 });

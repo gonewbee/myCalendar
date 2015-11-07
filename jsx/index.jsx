@@ -31,14 +31,25 @@ var CalendarDay = React.createClass({
     }
 });
 
+var CalendarDays = React.createClass({
+    render: function() {
+        var today = new Date();
+        return(
+            <div className="calendarDays">
+                <CalendarDay date={today}/>
+                <CalendarDay date={today}/>
+            </div>
+        );
+    }
+});
+
 var Calendar = React.createClass({
     render: function () {
-        var today = new Date();
         return (
             <div className="calendar">
                 <CalendarHeader />
                 <div className="clear"></div>
-                <CalendarDay date={today}/>
+                <CalendarDays/>
             </div>
         );
     }
