@@ -1,7 +1,16 @@
+$calendarDayWidth: 60px;
+$calendarDayHeight: 60px;
+
+body,p {
+  margin: 0 auto;
+}
+.clear {
+  clear: both;
+}
 .calendarHeader {
   li {
     list-style: none;
-    width: 60px;
+    width: $calendarDayWidth;
     padding: 5px;
     border: 1px solid #999;
     float: left;
@@ -10,5 +19,16 @@
   }
 }
 .calendarDay {
-  clear: both;
+  position: relative;
+  text-align: center;
+  width: $calendarDayWidth;
+  height: $calendarDayHeight;
+  line-height: $calendarDayHeight; // 可使文字垂直居中
+  canvas {
+    position: absolute;
+    top: 0px;left: 0px;
+    width:$calendarDayWidth;
+    height:$calendarDayHeight;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }

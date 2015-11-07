@@ -55,11 +55,14 @@ var CalendarHeader = React.createClass({
 
 var CalendarDay = React.createClass({
     render: function () {
-        var day = this.props.date.getDay();
+        var date = this.props.date;
+        var mdate = date.getDate();
+        var day = date.getDay();
         return React.createElement(
             'div',
             { className: 'calendarDay' },
-            day
+            mdate,
+            React.createElement('canvas', null)
         );
     }
 });
@@ -71,6 +74,7 @@ var Calendar = React.createClass({
             'div',
             { className: 'calendar' },
             React.createElement(CalendarHeader, null),
+            React.createElement('div', { className: 'clear' }),
             React.createElement(CalendarDay, { date: today })
         );
     }
