@@ -5,6 +5,32 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var CalendarMonth = React.createClass({
+    render: function() {
+        var year = this.props.year;
+        var month = this.props.month;
+        console.log("CalendarMonth",year,month);
+        var years = [];
+        var months = [];
+        for (var start=year-10; start<year+10; start++) {
+            years.push(<option value={start}>{start}年</option>);
+        }
+        for (var i=0;i<12;i++) {
+            months.push(<option value={i}>{i+1}月</option>)
+        }
+        return (
+            <div className="calendarMonth">
+                <select value={year} onChange={this.props.handleYearChange}>
+                    {years}
+                </select>
+                <select value={month} onChange={this.props.handleMonthChange}>
+                    {months}
+                </select>
+            </div>
+        );
+    }
+});
+
 var CalendarHeader = React.createClass({
     render: function() {
         return (
@@ -72,17 +98,47 @@ var CalendarDays = React.createClass({
 });
 
 var Calendar = React.createClass({
-    render: function () {
+    handleYearChange: function(event) {
+        var year = event.target.value;
+        var month = this.state.month;
+        var mdate = this.state.mdate;
+        console.log(year,month,mdate);
+        this.setState({
+            year: parseInt(year),
+            month: parseInt(month),
+            mdate: parseInt(mdate)
+        });
+    },
+    handleMonthChange: function(event) {
+        var year = this.state.year;
+        var month = event.target.value;
+        var mdate = this.state.mdate;
+        console.log(year,month,mdate);
+        this.setState({
+            year: parseInt(year),
+            month: parseInt(month),
+            mdate: parseInt(mdate)
+        });
+    },
+    getInitialState: function() {
         var today = new Date();
         var month = today.getMonth();
         var year = today.getFullYear();
         var mdate = today.getDate();
         console.log(year,month);
+        return {
+            year: year,
+            month: month,
+            mdate: mdate
+        };
+    },
+    render: function () {
         return (
             <div className="calendar">
+                <CalendarMonth year={this.state.year} month={this.state.month} handleYearChange={this.handleYearChange} handleMonthChange={this.handleMonthChange}/>
                 <CalendarHeader />
                 <div className="clear"></div>
-                <CalendarDays year={year} month={month} mdate={mdate}/>
+                <CalendarDays year={this.state.year} month={this.state.month} mdate={this.state.mdate}/>
             </div>
         );
     }

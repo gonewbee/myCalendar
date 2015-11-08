@@ -5,6 +5,46 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var CalendarMonth = React.createClass({
+    render: function () {
+        var year = this.props.year;
+        var month = this.props.month;
+        console.log("CalendarMonth", year, month);
+        var years = [];
+        var months = [];
+        for (var start = year - 10; start < year + 10; start++) {
+            years.push(React.createElement(
+                'option',
+                { value: start },
+                start,
+                '年'
+            ));
+        }
+        for (var i = 0; i < 12; i++) {
+            months.push(React.createElement(
+                'option',
+                { value: i },
+                i + 1,
+                '月'
+            ));
+        }
+        return React.createElement(
+            'div',
+            { className: 'calendarMonth' },
+            React.createElement(
+                'select',
+                { value: year, onChange: this.props.handleYearChange },
+                years
+            ),
+            React.createElement(
+                'select',
+                { value: month, onChange: this.props.handleMonthChange },
+                months
+            )
+        );
+    }
+});
+
 var CalendarHeader = React.createClass({
     render: function () {
         return React.createElement(
@@ -108,18 +148,48 @@ var CalendarDays = React.createClass({
 });
 
 var Calendar = React.createClass({
-    render: function () {
+    handleYearChange: function (event) {
+        var year = event.target.value;
+        var month = this.state.month;
+        var mdate = this.state.mdate;
+        console.log(year, month, mdate);
+        this.setState({
+            year: parseInt(year),
+            month: parseInt(month),
+            mdate: parseInt(mdate)
+        });
+    },
+    handleMonthChange: function (event) {
+        var year = this.state.year;
+        var month = event.target.value;
+        var mdate = this.state.mdate;
+        console.log(year, month, mdate);
+        this.setState({
+            year: parseInt(year),
+            month: parseInt(month),
+            mdate: parseInt(mdate)
+        });
+    },
+    getInitialState: function () {
         var today = new Date();
         var month = today.getMonth();
         var year = today.getFullYear();
         var mdate = today.getDate();
         console.log(year, month);
+        return {
+            year: year,
+            month: month,
+            mdate: mdate
+        };
+    },
+    render: function () {
         return React.createElement(
             'div',
             { className: 'calendar' },
+            React.createElement(CalendarMonth, { year: this.state.year, month: this.state.month, handleYearChange: this.handleYearChange, handleMonthChange: this.handleMonthChange }),
             React.createElement(CalendarHeader, null),
             React.createElement('div', { className: 'clear' }),
-            React.createElement(CalendarDays, { year: year, month: month, mdate: mdate })
+            React.createElement(CalendarDays, { year: this.state.year, month: this.state.month, mdate: this.state.mdate })
         );
     }
 });
