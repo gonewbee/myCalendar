@@ -55,12 +55,12 @@ var CalendarHeader = React.createClass({
 
 var CalendarDay = React.createClass({
     render: function () {
+        var pclass = "calendarDay " + this.props.state;
         var mdate = this.props.mdate;
         return React.createElement(
             'div',
-            { className: 'calendarDay' },
-            mdate,
-            React.createElement('canvas', null)
+            { className: pclass },
+            mdate
         );
     }
 });
@@ -81,18 +81,22 @@ var CalendarDays = React.createClass({
             var previousMonthLastDate = new Date(year, month, 0);
             var end = previousMonthLastDate.getDate();
             for (var i = end - firstDateDay + 1; i <= end; i++) {
-                days.push(React.createElement(CalendarDay, { mdate: i }));
+                days.push(React.createElement(CalendarDay, { mdate: i, state: 'notCurrentMonth' }));
             }
         }
         for (var i = 1; i <= lastDate.getDate(); i++) {
-            days.push(React.createElement(CalendarDay, { mdate: i }));
+            if (i == mdate) {
+                days.push(React.createElement(CalendarDay, { mdate: i, state: 'currentMonth currentDay' }));
+            } else {
+                days.push(React.createElement(CalendarDay, { mdate: i, state: 'currentMonth' }));
+            }
             if ((i + firstDateDay) % 7 == 0) {
                 days.push(React.createElement('div', { className: 'clear' }));
             }
         }
         if (lastDateDay != 6) {
             for (var i = 1; i <= 6 - lastDateDay; i++) {
-                days.push(React.createElement(CalendarDay, { mdate: i }));
+                days.push(React.createElement(CalendarDay, { mdate: i, state: 'notCurrentMonth' }));
             }
         }
         return React.createElement(

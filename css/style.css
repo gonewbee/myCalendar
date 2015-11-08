@@ -23,6 +23,8 @@ body, p {
   line-height: 60px;
   border: 1px solid #999;
   float: left; }
+  .calendarDay:hover {
+    background-color: #b4b472; }
   .calendarDay canvas {
     position: absolute;
     top: 0px;
@@ -30,5 +32,11 @@ body, p {
     width: 60px;
     height: 60px;
     background-color: rgba(0, 0, 0, 0.5); }
+
+.notCurrentMonth {
+  color: #999999; }
+
+.currentDay {
+  background-color: burlywood; }
 
 /*# sourceMappingURL=style.css.map */
