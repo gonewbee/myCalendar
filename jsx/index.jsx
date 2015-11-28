@@ -5,6 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+// 年和月份选择列表，在react中select可使用value
 var CalendarMonth = React.createClass({
     render: function() {
         var year = this.props.year;
@@ -13,10 +14,10 @@ var CalendarMonth = React.createClass({
         var years = [];
         var months = [];
         for (var start=year-10; start<year+10; start++) {
-            years.push(<option value={start}>{start}年</option>);
+            years.push(<option value={start} key={start}>{start}年</option>);
         }
         for (var i=0;i<12;i++) {
-            months.push(<option value={i}>{i+1}月</option>)
+            months.push(<option value={i} key={i}>{i+1}月</option>)
         }
         return (
             <div className="calendarMonth">
@@ -43,9 +44,10 @@ var CalendarHeader = React.createClass({
     }
 });
 
+// 某一天
 var CalendarDay = React.createClass({
     render: function() {
-        var pclass = "calendarDay " + this.props.state;
+        var pclass = "calendarDay " + this.props.status;
         var mdate = this.props.mdate;
         return(
             <div className={pclass}>
@@ -55,6 +57,7 @@ var CalendarDay = React.createClass({
     }
 });
 
+// 当月所有天列表
 var CalendarDays = React.createClass({
     render: function() {
         var days = [];
@@ -67,26 +70,30 @@ var CalendarDays = React.createClass({
         console.log(lastDate.getDate(),lastDate.getDay());
         var firstDateDay = firstDate.getDay(); // 第一天周几，0是周日，1是周一
         var lastDateDay = lastDate.getDay();
+        var index = 0;
         if (firstDateDay!=0) {
+            // 如果当月第一天不是星期天，在前面补充上个月的后几天。
             var previousMonthLastDate = new Date(year, month, 0);
             var end = previousMonthLastDate.getDate();
-            for(var i=end-firstDateDay+1;i<=end;i++) {
-                days.push(<CalendarDay mdate={i} state="notCurrentMonth"/>)
+            for(var i=end-firstDateDay+1;i<=end;i++,index++) {
+                days.push(<CalendarDay mdate={i} key={index} status="notCurrentMonth"/>)
             }
         }
-        for (var i=1; i<=lastDate.getDate(); i++) {
+        for (var i=1; i<=lastDate.getDate(); i++,index++) {
+            var status = "currentMonth";
             if (i==mdate) {
-                days.push(<CalendarDay mdate={i} state="currentMonth currentDay"/>);
-            } else {
-                days.push(<CalendarDay mdate={i} state="currentMonth"/>);
+                status += " currentDay";
             }
-            if ((i+firstDateDay)%7==0) {
-                days.push(<div className="clear"></div>);
+            // 周末换行
+            if ((i+firstDateDay)%7==1) {
+                status += " clearLef";
             }
+            days.push(<CalendarDay mdate={i} key={index} status={status}/>)
         }
+        // 如果当月最后一天不是周六，在后面补充下个月的前几天
         if (lastDateDay!=6) {
-            for (var i=1;i<=6-lastDateDay;i++) {
-                days.push(<CalendarDay mdate={i} state="notCurrentMonth"/>)
+            for (var i=1;i<=6-lastDateDay;i++,index++) {
+                days.push(<CalendarDay mdate={i} key={index} status="notCurrentMonth"/>)
             }
         }
         return(
@@ -124,7 +131,7 @@ var Calendar = React.createClass({
         var today = new Date();
         var month = today.getMonth();
         var year = today.getFullYear();
-        var mdate = today.getDate();
+        var mdate = today.getDate(); // 月的第几天，[1-31]
         console.log(year,month);
         return {
             year: year,

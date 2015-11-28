@@ -4,6 +4,10 @@ body, p {
 .clear {
   clear: both; }
 
+.clearLef {
+  clear: left;
+}
+
 .calendarHeader ol {
   margin: 0px;
   padding: 0px; }
