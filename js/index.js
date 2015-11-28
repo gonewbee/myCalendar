@@ -105,11 +105,13 @@ var CalendarDay = React.createClass({
 
     render: function () {
         var pclass = "calendarDay " + this.props.status;
-        var mdate = this.props.date;
+        var year = this.props.year;
+        var month = this.props.month;
+        var date = this.props.date;
         return React.createElement(
             'div',
-            { className: pclass, onClick: this.props.handleSelect.bind(null, mdate) },
-            mdate
+            { className: pclass, onClick: this.props.handleSelect.bind(null, year, month, date) },
+            date
         );
     }
 });
@@ -134,13 +136,15 @@ var CalendarDays = React.createClass({
             // 如果当月第一天不是星期天，在前面补充上个月的后几天。
             var previousMonthLastDate = new Date(year, month, 0);
             var end = previousMonthLastDate.getDate();
+            var lyear, lmonth;
+            month == 0 ? (lyear = year - 1, lmonth = 11) : (lyear = year, lmonth = month - 1);
             for (var i = end - firstDateDay + 1; i <= end; i++, index++) {
-                days.push(React.createElement(CalendarDay, { year: year, month: month, date: i, key: index, status: 'notCurrentMonth', handleSelect: this.props.handleSelect }));
+                days.push(React.createElement(CalendarDay, { year: lyear, month: lmonth, date: i, key: index, status: 'notCurrentMonth', handleSelect: this.props.handleSelect }));
             }
         }
         for (var i = 1; i <= lastDate.getDate(); i++, index++) {
             var status = "currentMonth";
-            if (i == mdate) {
+            if (year == today.getFullYear() && month == today.getMonth() && i == mdate) {
                 status += " currentDay";
             }
             if (i == this.props.dselect) {
@@ -154,8 +158,10 @@ var CalendarDays = React.createClass({
         }
         // 如果当月最后一天不是周六，在后面补充下个月的前几天
         if (lastDateDay != 6) {
+            var lyear, lmonth;
+            month == 11 ? (lyear = year + 1, lmonth = 0) : (lyear = year, lmonth = month + 1);
             for (var i = 1; i <= 6 - lastDateDay; i++, index++) {
-                days.push(React.createElement(CalendarDay, { year: year, month: month, date: i, key: index, status: 'notCurrentMonth', handleSelect: this.props.handleSelect }));
+                days.push(React.createElement(CalendarDay, { year: lyear, month: lmonth, date: i, key: index, status: 'notCurrentMonth', handleSelect: this.props.handleSelect }));
             }
         }
         return React.createElement(
@@ -183,12 +189,15 @@ var Calendar = React.createClass({
                 console.log("type::::", type);
         }
     },
-    handleSelect: function (dselect) {
+    handleSelect: function (year, month, dselect) {
         console.log("select:", dselect);
-        this.setState({ dselect: dselect });
+        this.setState({
+            year: year,
+            month: month,
+            dselect: dselect
+        });
     },
     handleReturnToday: function () {
-        var today = new Date();
         var month = today.getMonth();
         var year = today.getFullYear();
         var mdate = today.getDate(); // 月的第几天，[1-31]
@@ -201,7 +210,6 @@ var Calendar = React.createClass({
         });
     },
     getInitialState: function () {
-        var today = new Date();
         var month = today.getMonth();
         var year = today.getFullYear();
         var mdate = today.getDate(); // 月的第几天，[1-31]
@@ -226,5 +234,7 @@ var Calendar = React.createClass({
         );
     }
 });
+
+var today = new Date();
 
 ReactDOM.render(React.createElement(Calendar, null), document.getElementById('main'));
