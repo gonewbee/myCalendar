@@ -21,12 +21,13 @@ var CalendarMonth = React.createClass({
         }
         return (
             <div className="calendarMonth">
-                <select value={year} onChange={this.props.handleYearChange}>
+                <select value={year} onChange={this.props.handleYearMonthChange.bind(null, "year")}>
                     {years}
                 </select>
-                <select value={month} onChange={this.props.handleMonthChange}>
+                <select value={month} onChange={this.props.handleYearMonthChange.bind(null, "month")}>
                     {months}
                 </select>
+                <input type="button" value="返回今天" onClick={this.props.handleReturnToday}/>
             </div>
         );
     }
@@ -44,11 +45,11 @@ var CalendarHeader = React.createClass({
     }
 });
 
-// 某一天
+// 具体一天的布局
 var CalendarDay = React.createClass({
     render: function() {
         var pclass = "calendarDay " + this.props.status;
-        var mdate = this.props.mdate;
+        var mdate = this.props.date;
         return(
             <div className={pclass}>
                 {mdate}
@@ -66,8 +67,8 @@ var CalendarDays = React.createClass({
         var mdate = this.props.mdate;
         var firstDate = new Date(year, month, 1); // 月第一天
         var lastDate = new Date(year, month+1, 0); // 月最后一天
-        console.log(firstDate.getDate(),firstDate.getDay());
-        console.log(lastDate.getDate(),lastDate.getDay());
+        console.log("month:", month, "first date:", firstDate.getDate(), "week:", firstDate.getDay());
+        console.log("month:", month, "last date:", lastDate.getDate(), "week:", lastDate.getDay());
         var firstDateDay = firstDate.getDay(); // 第一天周几，0是周日，1是周一
         var lastDateDay = lastDate.getDay();
         var index = 0;
@@ -76,7 +77,7 @@ var CalendarDays = React.createClass({
             var previousMonthLastDate = new Date(year, month, 0);
             var end = previousMonthLastDate.getDate();
             for(var i=end-firstDateDay+1;i<=end;i++,index++) {
-                days.push(<CalendarDay mdate={i} key={index} status="notCurrentMonth"/>)
+                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth"/>)
             }
         }
         for (var i=1; i<=lastDate.getDate(); i++,index++) {
@@ -88,12 +89,12 @@ var CalendarDays = React.createClass({
             if ((i+firstDateDay)%7==1) {
                 status += " clearLef";
             }
-            days.push(<CalendarDay mdate={i} key={index} status={status}/>)
+            days.push(<CalendarDay year={year} month={month} date={i} key={index} status={status}/>)
         }
         // 如果当月最后一天不是周六，在后面补充下个月的前几天
         if (lastDateDay!=6) {
             for (var i=1;i<=6-lastDateDay;i++,index++) {
-                days.push(<CalendarDay mdate={i} key={index} status="notCurrentMonth"/>)
+                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth"/>)
             }
         }
         return(
@@ -105,10 +106,21 @@ var CalendarDays = React.createClass({
 });
 
 var Calendar = React.createClass({
-    handleYearChange: function(event) {
-        var year = event.target.value;
+    handleYearMonthChange: function(type, event) {
+        var year = this.state.year;
         var month = this.state.month;
         var mdate = this.state.mdate;
+        switch (type) {
+            case "year":
+                year = event.target.value;
+                break;
+            case "month":
+                month = event.target.value;
+                break;
+            default :
+                console.log("type::::",type);
+                return;
+        }
         console.log(year,month,mdate);
         this.setState({
             year: parseInt(year),
@@ -116,11 +128,12 @@ var Calendar = React.createClass({
             mdate: parseInt(mdate)
         });
     },
-    handleMonthChange: function(event) {
-        var year = this.state.year;
-        var month = event.target.value;
-        var mdate = this.state.mdate;
-        console.log(year,month,mdate);
+    handleReturnToday: function() {
+        var today = new Date();
+        var month = today.getMonth();
+        var year = today.getFullYear();
+        var mdate = today.getDate(); // 月的第几天，[1-31]
+        console.log("today:",year,month);
         this.setState({
             year: parseInt(year),
             month: parseInt(month),
@@ -132,7 +145,7 @@ var Calendar = React.createClass({
         var month = today.getMonth();
         var year = today.getFullYear();
         var mdate = today.getDate(); // 月的第几天，[1-31]
-        console.log(year,month);
+        console.log("today:",year,month);
         return {
             year: year,
             month: month,
@@ -142,7 +155,8 @@ var Calendar = React.createClass({
     render: function () {
         return (
             <div className="calendar">
-                <CalendarMonth year={this.state.year} month={this.state.month} handleYearChange={this.handleYearChange} handleMonthChange={this.handleMonthChange}/>
+                <CalendarMonth year={this.state.year} month={this.state.month} handleYearMonthChange={this.handleYearMonthChange}
+                               handleReturnToday={this.handleReturnToday}/>
                 <CalendarHeader />
                 <div className="clear"></div>
                 <CalendarDays year={this.state.year} month={this.state.month} mdate={this.state.mdate}/>
