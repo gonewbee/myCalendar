@@ -51,7 +51,7 @@ var CalendarDay = React.createClass({
         var pclass = "calendarDay " + this.props.status;
         var mdate = this.props.date;
         return(
-            <div className={pclass}>
+            <div className={pclass} onClick={this.props.handleSelect.bind(null, mdate)}>
                 {mdate}
             </div>
         );
@@ -77,7 +77,7 @@ var CalendarDays = React.createClass({
             var previousMonthLastDate = new Date(year, month, 0);
             var end = previousMonthLastDate.getDate();
             for(var i=end-firstDateDay+1;i<=end;i++,index++) {
-                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth"/>)
+                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth" handleSelect={this.props.handleSelect}/>)
             }
         }
         for (var i=1; i<=lastDate.getDate(); i++,index++) {
@@ -85,16 +85,19 @@ var CalendarDays = React.createClass({
             if (i==mdate) {
                 status += " currentDay";
             }
+            if (i==this.props.dselect) {
+                status += " selectDay";
+            }
             // 周末换行
             if ((i+firstDateDay)%7==1) {
                 status += " clearLef";
             }
-            days.push(<CalendarDay year={year} month={month} date={i} key={index} status={status}/>)
+            days.push(<CalendarDay year={year} month={month} date={i} key={index} status={status} handleSelect={this.props.handleSelect}/>)
         }
         // 如果当月最后一天不是周六，在后面补充下个月的前几天
         if (lastDateDay!=6) {
             for (var i=1;i<=6-lastDateDay;i++,index++) {
-                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth"/>)
+                days.push(<CalendarDay year={year} month={month} date={i} key={index} status="notCurrentMonth" handleSelect={this.props.handleSelect}/>)
             }
         }
         return(
@@ -107,26 +110,22 @@ var CalendarDays = React.createClass({
 
 var Calendar = React.createClass({
     handleYearMonthChange: function(type, event) {
-        var year = this.state.year;
-        var month = this.state.month;
-        var mdate = this.state.mdate;
         switch (type) {
             case "year":
                 year = event.target.value;
+                this.setState({year:parseInt(year)});
                 break;
             case "month":
                 month = event.target.value;
+                this.setState({month:parseInt(month)});
                 break;
             default :
                 console.log("type::::",type);
-                return;
         }
-        console.log(year,month,mdate);
-        this.setState({
-            year: parseInt(year),
-            month: parseInt(month),
-            mdate: parseInt(mdate)
-        });
+    },
+    handleSelect: function(dselect) {
+        console.log("select:", dselect);
+        this.setState({dselect:dselect});
     },
     handleReturnToday: function() {
         var today = new Date();
@@ -135,9 +134,10 @@ var Calendar = React.createClass({
         var mdate = today.getDate(); // 月的第几天，[1-31]
         console.log("today:",year,month);
         this.setState({
-            year: parseInt(year),
-            month: parseInt(month),
-            mdate: parseInt(mdate)
+            year: year,
+            month: month,
+            mdate: mdate,
+            dselect: mdate,
         });
     },
     getInitialState: function() {
@@ -149,7 +149,8 @@ var Calendar = React.createClass({
         return {
             year: year,
             month: month,
-            mdate: mdate
+            mdate: mdate,
+            dselect: mdate,
         };
     },
     render: function () {
@@ -159,7 +160,8 @@ var Calendar = React.createClass({
                                handleReturnToday={this.handleReturnToday}/>
                 <CalendarHeader />
                 <div className="clear"></div>
-                <CalendarDays year={this.state.year} month={this.state.month} mdate={this.state.mdate}/>
+                <CalendarDays year={this.state.year} month={this.state.month} mdate={this.state.mdate}
+                              dselect={this.state.dselect} handleSelect={this.handleSelect}/>
             </div>
         );
     }

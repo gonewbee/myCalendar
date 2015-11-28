@@ -40,6 +40,10 @@ body, p {
 .notCurrentMonth {
   color: #999999; }
 
+.selectDay {
+  background-color: #b4b472;
+}
+
 .currentDay {
   background-color: burlywood; }
 
