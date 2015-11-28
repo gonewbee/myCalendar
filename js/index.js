@@ -124,7 +124,7 @@ var CalendarDays = React.createClass({
         var days = [];
         var year = this.props.year;
         var month = this.props.month;
-        var mdate = this.props.mdate;
+        var dselect = this.props.dselect;
         var firstDate = new Date(year, month, 1); // 月第一天
         var lastDate = new Date(year, month + 1, 0); // 月最后一天
         console.log("month:", month, "first date:", firstDate.getDate(), "week:", firstDate.getDay());
@@ -144,10 +144,10 @@ var CalendarDays = React.createClass({
         }
         for (var i = 1; i <= lastDate.getDate(); i++, index++) {
             var status = "currentMonth";
-            if (year == today.getFullYear() && month == today.getMonth() && i == mdate) {
+            if (year == today.getFullYear() && month == today.getMonth() && i == today.getDate()) {
                 status += " currentDay";
             }
-            if (i == this.props.dselect) {
+            if (i == dselect) {
                 status += " selectDay";
             }
             // 周末换行
@@ -198,16 +198,8 @@ var Calendar = React.createClass({
         });
     },
     handleReturnToday: function () {
-        var month = today.getMonth();
-        var year = today.getFullYear();
-        var mdate = today.getDate(); // 月的第几天，[1-31]
-        console.log("today:", year, month);
-        this.setState({
-            year: year,
-            month: month,
-            mdate: mdate,
-            dselect: mdate
-        });
+        var data = this.getInitialState();
+        this.setState(data);
     },
     getInitialState: function () {
         var month = today.getMonth();
@@ -217,7 +209,6 @@ var Calendar = React.createClass({
         return {
             year: year,
             month: month,
-            mdate: mdate,
             dselect: mdate
         };
     },
@@ -229,7 +220,7 @@ var Calendar = React.createClass({
                 handleReturnToday: this.handleReturnToday }),
             React.createElement(CalendarHeader, null),
             React.createElement('div', { className: 'clear' }),
-            React.createElement(CalendarDays, { year: this.state.year, month: this.state.month, mdate: this.state.mdate,
+            React.createElement(CalendarDays, { year: this.state.year, month: this.state.month,
                 dselect: this.state.dselect, handleSelect: this.handleSelect })
         );
     }
