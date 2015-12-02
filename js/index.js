@@ -181,7 +181,10 @@ var DayWeather = React.createClass({
         return React.createElement(
             'div',
             { className: 'dayWeather' },
-            this.props.pm
+            this.props.txt,
+            this.props.aqi,
+            this.props.qlty,
+            this.props.update
         );
     }
 });
@@ -189,54 +192,26 @@ var DayWeather = React.createClass({
 var DayShow = React.createClass({
     displayName: 'DayShow',
 
-    getWeather: function () {
-        $.ajax({
-            url: "http://apis.baidu.com/apistore/weatherservice/weather",
-            data: {
-                citypinyin: "beijing"
-            },
-            headers: { "apikey": "31ac18b28c025348f056bbb9efb47c06" },
-            dataType: 'json',
-            cache: false,
-            success: (function (data) {
-                console.log(data);
-            }).bind(this),
-            error: (function (xhr, status, err) {
-                console.error(status, err.toString());
-            }).bind(this)
-        });
-    },
-    getPM: function () {
+    getPM: function (city) {
         $.ajax({
             url: "http://apis.baidu.com/heweather/weather/free",
             data: {
-                city: "北京"
+                city: city
             },
             headers: { "apikey": "31ac18b28c025348f056bbb9efb47c06" },
             dataType: 'json',
             cache: false,
             success: (function (data) {
-                console.log(data);
-            }).bind(this),
-            error: (function (xhr, status, err) {
-                console.error(status, err.toString());
-            }).bind(this)
-        });
-    },
-    getTrain: function () {
-        $.ajax({
-            url: "http://apis.baidu.com/qunar/qunar_train_service/s2ssearch",
-            data: {
-                version: 1.0,
-                from: "北京",
-                to: "济南",
-                date: "2015-12-01"
-            },
-            headers: { "apikey": "31ac18b28c025348f056bbb9efb47c06" },
-            dataType: 'json',
-            cache: false,
-            success: (function (data) {
-                console.log(data);
+                var weather = data["HeWeather data service 3.0"][0];
+                var now = weather["now"];
+                var aqi = weather["aqi"]["city"];
+                console.log(weather["basic"]["update"]);
+                console.log(now);
+                console.log(aqi);
+                this.setState({ txt: now["cond"]["txt"] });
+                this.setState({ aqi: aqi["aqi"] });
+                this.setState({ qlty: aqi["qlty"] });
+                this.setState({ update: weather["basic"]["update"]["loc"] });
             }).bind(this),
             error: (function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -244,15 +219,16 @@ var DayShow = React.createClass({
         });
     },
     componentDidMount: function () {
-        //this.getWeather();
-        this.getPM();
-        //this.getTrain();
+        this.getPM(this.state.city);
+    },
+    getInitialState: function () {
+        return { city: "济南" };
     },
     render: function () {
         return React.createElement(
             'div',
             { className: 'dayShow clearLef' },
-            this.props.dselect
+            React.createElement(DayWeather, { txt: this.state.txt, aqi: this.state.aqi, qlty: this.state.qlty, update: this.state.update })
         );
     }
 });
