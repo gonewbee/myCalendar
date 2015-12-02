@@ -4,6 +4,8 @@
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+var today = new Date();
+var $ = require('jquery');
 
 // 年和月份选择列表，在react中select可使用value
 var CalendarMonth = React.createClass({
@@ -114,6 +116,85 @@ var CalendarDays = React.createClass({
     }
 });
 
+var DayWeather = React.createClass({
+    render: function () {
+        return (
+            <div className="dayWeather">
+                {this.props.pm}
+            </div>
+        );
+    }
+});
+
+var DayShow = React.createClass({
+    getWeather: function() {
+        $.ajax({
+            url: "http://apis.baidu.com/apistore/weatherservice/weather",
+            data: {
+                citypinyin: "beijing",
+            },
+            headers: {"apikey":"31ac18b28c025348f056bbb9efb47c06"},
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                console.log(data);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }.bind(this)
+        });
+    },
+    getPM: function() {
+        $.ajax({
+            url: "http://apis.baidu.com/heweather/weather/free",
+            data: {
+                city: "北京",
+            },
+            headers: {"apikey":"31ac18b28c025348f056bbb9efb47c06"},
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                console.log(data);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }.bind(this)
+        });
+    },
+    getTrain: function() {
+        $.ajax({
+            url: "http://apis.baidu.com/qunar/qunar_train_service/s2ssearch",
+            data: {
+                version: 1.0,
+                from: "北京",
+                to: "济南",
+                date: "2015-12-01",
+            },
+            headers: {"apikey":"31ac18b28c025348f056bbb9efb47c06"},
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                console.log(data);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }.bind(this)
+        });
+    },
+    componentDidMount: function() {
+        //this.getWeather();
+        this.getPM();
+        //this.getTrain();
+    },
+    render: function() {
+        return (
+            <div className="dayShow clearLef">
+                {this.props.dselect}
+            </div>
+        );
+    }
+});
+
 var Calendar = React.createClass({
     handleYearMonthChange: function(type, event) {
         switch (type) {
@@ -161,12 +242,12 @@ var Calendar = React.createClass({
                 <div className="clear"></div>
                 <CalendarDays year={this.state.year} month={this.state.month}
                               dselect={this.state.dselect} handleSelect={this.handleSelect}/>
+                <DayShow year={this.state.year} month={this.state.month} dselect={this.state.dselect}/>
             </div>
         );
     }
 });
 
-var today = new Date();
 
 ReactDOM.render(
     <Calendar />,
