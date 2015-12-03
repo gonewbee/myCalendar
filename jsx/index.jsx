@@ -118,12 +118,34 @@ var CalendarDays = React.createClass({
 
 var DayWeather = React.createClass({
     render: function () {
+        if (typeof this.props.weather=='undefined')
+            return(
+                <div className="dayWeather">
+                </div>
+            );
+        var weather = this.props.weather;
+        var now = weather["now"];
+        var aqi = weather["aqi"]["city"];
+        console.log(weather["basic"]["update"]);
+        console.log(now);
+        console.log(aqi);
         return (
             <div className="dayWeather">
-                {this.props.txt}
-                {this.props.aqi}
-                {this.props.qlty}
-                {this.props.update}
+                天气:{now["cond"]["txt"]}
+                ; pm:{aqi["aqi"]}
+                ; 空气质量:{aqi["qlty"]}
+                ; 温度:{now["tmp"]}
+                ; 更新:{weather["basic"]["update"]["loc"]}
+            </div>
+        );
+    }
+});
+
+var DayPlan = React.createClass({
+    render: function() {
+        return(
+            <div className="dayPlan">
+                <p>{this.props.year}年{this.props.month}月{this.props.dselect}日</p>
             </div>
         );
     }
@@ -141,15 +163,7 @@ var DayShow = React.createClass({
             cache: false,
             success: function(data) {
                 var weather = data["HeWeather data service 3.0"][0];
-                var now = weather["now"];
-                var aqi = weather["aqi"]["city"];
-                console.log(weather["basic"]["update"]);
-                console.log(now);
-                console.log(aqi);
-                this.setState({txt:now["cond"]["txt"]});
-                this.setState({aqi:aqi["aqi"]});
-                this.setState({qlty:aqi["qlty"]});
-                this.setState({update:weather["basic"]["update"]["loc"]});
+                this.setState({weather:weather});
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(status, err.toString());
@@ -165,7 +179,8 @@ var DayShow = React.createClass({
     render: function() {
         return (
             <div className="dayShow clearLef">
-                <DayWeather txt={this.state.txt} aqi={this.state.aqi} qlty={this.state.qlty} update={this.state.update} />
+                <DayWeather weather={this.state.weather}/>
+                <DayPlan year={this.props.year} month={this.props.month} dselect={this.props.dselect} />
             </div>
         );
     }
