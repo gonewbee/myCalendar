@@ -55,8 +55,9 @@ var CalendarDay = React.createClass({
         var month = this.props.month;
         var date = this.props.date;
         return(
-            <div className={pclass} onClick={this.props.handleSelect.bind(null, year, month, date)}>
-                {date}
+            <div className={pclass}>
+                <span>{date}</span>
+                <canvas onClick={this.props.handleSelect.bind(null, year, month, date)}></canvas>
             </div>
         );
     }
@@ -108,6 +109,7 @@ var CalendarDays = React.createClass({
                 days.push(<CalendarDay year={lyear} month={lmonth} date={i} key={index} status="notCurrentMonth" handleSelect={this.props.handleSelect}/>)
             }
         }
+        console.log('total index;', index);
         return(
             <div className="calendarDays">
                 {days}
