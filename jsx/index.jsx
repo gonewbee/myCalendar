@@ -49,6 +49,39 @@ var CalendarHeader = React.createClass({
 
 // 具体一天的布局
 var CalendarDay = React.createClass({
+    handleMouseDown: function (e) {
+        console.log('CalendarDays mousedown---------');
+        var canvas = this.refs.perCanvas;
+        drawing = true;
+        var top = canvas.getBoundingClientRect().top;
+        var left = canvas.getBoundingClientRect().left;
+        currX = e.clientX - left;
+        currY = e.clientY - top;
+    },
+    handleMouseUp: function (e) {
+        console.log('CalendarDays mouseup==========');
+        drawing = false;
+    },
+    handleMouseMove: function (e) {
+        if (drawing) {
+            var canvas = this.refs.perCanvas;
+            var ctx = canvas.getContext("2d");
+            var top = canvas.getBoundingClientRect().top;
+            var left = canvas.getBoundingClientRect().left;
+            prevX = currX;
+            prevY = currY;
+            currX = e.clientX - left;
+            currY = e.clientY - top;
+            console.log('CalendarDay mousemove!!', currX, ' ', currY);
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(currX, currY);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+        }
+    },
     render: function() {
         var pclass = "calendarDay " + this.props.status;
         var year = this.props.year;
@@ -57,7 +90,9 @@ var CalendarDay = React.createClass({
         return(
             <div className={pclass}>
                 <span>{date}</span>
-                <canvas onClick={this.props.handleSelect.bind(null, year, month, date)}></canvas>
+                <canvas onClick={this.props.handleSelect.bind(null, year, month, date)} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}
+                        onMouseMove={this.handleMouseMove}
+                        ref="perCanvas"></canvas>
             </div>
         );
     }
@@ -65,6 +100,9 @@ var CalendarDay = React.createClass({
 
 // 当月所有天列表
 var CalendarDays = React.createClass({
+    handleMouseMove: function (e) {
+        e.preventDefault();
+    },
     render: function() {
         var days = [];
         var year = this.props.year;
@@ -111,7 +149,7 @@ var CalendarDays = React.createClass({
         }
         console.log('total index;', index);
         return(
-            <div className="calendarDays">
+            <div className="calendarDays" onMouseMove={this.handleMouseMove}>
                 {days}
             </div>
         );
@@ -241,6 +279,11 @@ var Calendar = React.createClass({
     }
 });
 
+var drawing = false;
+var prevX = 0,
+    currX = 0,
+    prevY = 0,
+    currY = 0;
 
 ReactDOM.render(
     <Calendar />,
